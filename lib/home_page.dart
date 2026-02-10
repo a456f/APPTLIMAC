@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
+import 'plantillas_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,12 +8,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: const Color(0xFFF2F2F7),
       appBar: AppBar(
-        title: const Text('Dashboard Tli'),
+        title: const Text('Dashboard Tli', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
         centerTitle: true,
-        backgroundColor: const Color(0xFF0D47A1),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
         elevation: 0,
       ),
       drawer: Drawer(
@@ -53,30 +54,48 @@ class HomePage extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Resumen General",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2C3E50),
+            const SizedBox(height: 20),
+            // Foto de Perfil al medio
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: const CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage('https://i.pravatar.cc/300'),
+                  backgroundColor: Colors.grey,
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
+                crossAxisSpacing: 20.0,
+                mainAxisSpacing: 20.0,
                 children: [
-                  _buildCard(Icons.analytics_outlined, "Estadísticas", Colors.purple),
-                  _buildCard(Icons.people_outline, "Usuarios", Colors.blue),
-                  _buildCard(Icons.shopping_bag_outlined, "Ventas", Colors.green),
-                  _buildCard(Icons.inventory_2_outlined, "Productos", Colors.orange),
-                  _buildCard(Icons.support_agent, "Soporte", Colors.redAccent),
+                  _buildCard(
+                    Icons.description_outlined,
+                    "Plantillas",
+                    const Color(0xFF007AFF),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const PlantillasPage()));
+                    },
+                  ),
+                  _buildCard(Icons.attach_money, "Liquidaciones", const Color(0xFF34C759)),
                 ],
               ),
             ),
@@ -86,34 +105,47 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(IconData icon, String title, Color color) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: InkWell(
-        onTap: () {},
+  Widget _buildCard(IconData icon, String title, Color color, {VoidCallback? onTap}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap ?? () {},
+          borderRadius: BorderRadius.circular(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(icon, size: 40, color: color),
               ),
-              child: Icon(icon, size: 38, color: color),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  letterSpacing: -0.5,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
