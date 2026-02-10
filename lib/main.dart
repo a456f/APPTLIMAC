@@ -15,8 +15,27 @@ class MyApp extends StatelessWidget {
       title: 'TlI APP',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D47A1)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF007AFF)),
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF2F2F7),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          prefixIconColor: const Color(0xFF8E8E93),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: const Color(0xFF007AFF),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            padding: const EdgeInsets.symmetric(vertical: 18),
+          ),
+        ),
       ),
       home: const LoginPage(),
     );
@@ -45,49 +64,57 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [const Color(0xFF0D47A1), const Color(0xFF42A5F5)],
-          ),
-        ),
+      backgroundColor: const Color(0xFFF2F2F7),
+      body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
-            child: Card(
-              elevation: 12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Form(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.hexagon_outlined, // Icono más abstracto y moderno
+                    size: 60,
+                    color: Color(0xFF007AFF),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Icon(
-                        Icons.account_circle,
-                        size: 80,
-                        color: Color(0xFF0D47A1),
-                      ),
-                      const SizedBox(height: 20),
                       Text(
-                        'Bienvenido a TLI',
-                        style: Theme.of(context).textTheme.headlineSmall
+                        'Bienvenido',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF0D47A1),
+                              color: Colors.black,
+                              letterSpacing: -0.5,
                             ),
                       ),
                       const SizedBox(height: 10),
-                      const Text(
-                        'Inicia sesión para continuar',
-                        style: TextStyle(color: Colors.grey),
+                      Text(
+                        'Ingresa tus credenciales para acceder.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey.shade600, fontSize: 17),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 50),
                       TextFormField(
                         controller: _emailController,
                         validator: (value) {
@@ -99,11 +126,6 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           labelText: 'Usuario',
                           prefixIcon: const Icon(Icons.person_outline),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade50,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -119,18 +141,10 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           labelText: 'Contraseña',
                           prefixIcon: const Icon(Icons.lock_outline),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade50,
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
+                      const SizedBox(height: 40),
+                      ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               Navigator.pushReplacement(
@@ -142,26 +156,21 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0D47A1),
+                            backgroundColor: const Color(0xFF007AFF),
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 5,
                           ),
                           child: const Text(
                             'INGRESAR',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 17,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
