@@ -86,10 +86,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.hexagon_outlined, // Icono más abstracto y moderno
-                    size: 60,
-                    color: Color(0xFF007AFF),
+                  child: Image.asset(
+                    'assets/logoapp.png',
+                    height: 60,
                   ),
                 ),
                 const SizedBox(height: 40),
