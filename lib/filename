@@ -109,25 +109,26 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   if (!_isFocused)
-                    const Text(
-                      "¡Bienvenido!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  const Text(
+                    "¡Bienvenido!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
-
-                  if (!_isFocused) const SizedBox(height: 8),
+                  ),
 
                   if (!_isFocused)
-                    Text(
-                      "Inicia sesión para continuar",
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 16,
-                      ),
+                  const SizedBox(height: 8),
+
+                  if (!_isFocused)
+                  Text(
+                    "Inicia sesión para continuar",
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 16,
                     ),
+                  ),
 
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
