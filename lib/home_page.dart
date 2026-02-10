@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: const Text('Dashboard Tlio'),
+        title: const Text('Dashboard Tli'),
         centerTitle: true,
         backgroundColor: const Color(0xFF0D47A1),
         foregroundColor: Colors.white,
@@ -21,8 +21,8 @@ class HomePage extends StatelessWidget {
           children: [
             const UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Color(0xFF0D47A1)),
-              accountName: Text("Usuario Tlio"),
-              accountEmail: Text("usuario@tlio.com"),
+              accountName: Text("Usuario Tli"),
+              accountEmail: Text("usuario@tli.com"),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Text("U",

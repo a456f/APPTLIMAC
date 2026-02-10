@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'Bienvenido a Tlio',
+                        'Bienvenido a TLI',
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
