@@ -8,8 +8,18 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..forward();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -18,13 +28,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F7),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         // The hamburger icon is removed automatically as there is no longer a Drawer.
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -34,7 +50,19 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 16),
         ],
       ),
-      body: IndexedStack(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF0D0D0D),
+              Color(0xFF000000),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: IndexedStack(
         index: _selectedIndex,
         children: <Widget>[
           // Tab 1: Dashboard
@@ -45,7 +73,23 @@ class _HomePageState extends State<HomePage> {
           children: [
             const SizedBox(height: 10),
             // Encabezado Moderno
-            Row(
+            SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.5),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: _animationController,
+                curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+              )),
+              child: FadeTransition(
+                opacity: Tween<double>(
+                  begin: 0.0,
+                  end: 1.0,
+                ).animate(CurvedAnimation(
+                  parent: _animationController,
+                  curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+                )),
+                child: Row(
               children: [
                 Expanded(
                   child: Column(
@@ -56,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -65,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                         "Bienvenido a tu panel",
                         style: TextStyle(
                           fontSize: 17,
-                          color: Colors.grey,
+                          color: Colors.grey.shade400,
                         ),
                       ),
                     ],
@@ -74,21 +118,23 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 3),
+                    border: Border.all(color: const Color(0xFFB6FF00), width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
+                        color: const Color(0xFFB6FF00).withOpacity(0.6),
+                        blurRadius: 25,
+                        spreadRadius: 2,
                       ),
                     ],
                   ),
                   child: const CircleAvatar(
                     radius: 28,
-                    backgroundImage: NetworkImage('https://i.pravatar.cc/300'),
+                    backgroundImage: AssetImage('assets/user.png'),
                   ),
                 ),
               ],
+            ),
+              ),
             ),
             const SizedBox(height: 40),
             const Text(
@@ -96,7 +142,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 20),
@@ -111,12 +157,13 @@ class _HomePageState extends State<HomePage> {
                     Icons.description_outlined,
                     "Plantillas",
                     "Gestionar docs",
-                    const Color(0xFF007AFF),
+                    const Color(0xFF00E5FF),
+                    1,
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const PlantillasPage()));
                     },
                   ),
-                  _buildCard(Icons.attach_money, "Liquidaciones", "Ver pagos", const Color(0xFF34C759)),
+                  _buildCard(Icons.attach_money, "Liquidaciones", "Ver pagos", const Color(0xFFB6FF00), 2),
                 ],
               ),
             ),
@@ -125,18 +172,21 @@ class _HomePageState extends State<HomePage> {
       ),
           // Tab 2: Settings (Placeholder)
           const Center(
-            child: Text('Página de Ajustes'),
+            child: Text('Página de Ajustes', style: TextStyle(color: Colors.white)),
           ),
           // Tab 3: Profile (Placeholder)
           const Center(
-            child: Text('Página de Perfil'),
+            child: Text('Página de Perfil', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
+        ),
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          color: Colors.black,
           border: Border(
-            top: BorderSide(color: Colors.grey.shade300, width: 0.5),
+            top: BorderSide(color: Colors.white.withOpacity(0.1), width: 0.5),
           ),
         ),
         child: BottomNavigationBar(
@@ -156,9 +206,9 @@ class _HomePageState extends State<HomePage> {
           ],
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          selectedItemColor: const Color(0xFF007AFF),
+          selectedItemColor: const Color(0xFFB6FF00),
           unselectedItemColor: Colors.grey[600],
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.black,
           type: BottomNavigationBarType.fixed, // Consistent with iOS style
           elevation: 0,
         ),
@@ -166,14 +216,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCard(IconData icon, String title, String subtitle, Color color, {VoidCallback? onTap}) {
-    return Container(
+  Widget _buildCard(IconData icon, String title, String subtitle, Color color, int index, {VoidCallback? onTap}) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, 0.5), // Empieza un poco más abajo
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(index * 0.2, 1.0, curve: Curves.easeOutCubic), // Efecto cascada
+      )),
+      child: FadeTransition(
+        opacity: Tween<double>(
+          begin: 0.0,
+          end: 1.0,
+        ).animate(CurvedAnimation(
+          parent: _animationController,
+          curve: Interval(index * 0.2, 1.0, curve: Curves.easeOut),
+        )),
+        child: Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF111111),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.5),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -201,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: Colors.white,
                   letterSpacing: -0.5,
                 ),
               ),
@@ -215,6 +282,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+        ),
+      ),
         ),
       ),
     );
