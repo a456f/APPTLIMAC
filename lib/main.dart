@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _typingPulseController;
   bool _isFocused = false;
+  bool _isPasswordObscured = true;
 
   @override
   void initState() {
@@ -54,7 +55,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   void _onFocusChange() {
     setState(() {
-      _isFocused = _emailFocusNode.hasFocus || _passwordFocusNode.hasFocus;
+      final hasFocus = _emailFocusNode.hasFocus || _passwordFocusNode.hasFocus;
+      // Si se pierde el foco, inicia la animación de desvanecimiento.
+      if (!hasFocus && _isFocused) {
+        _typingPulseController.reverse();
+      }
+      _isFocused = hasFocus;
     });
   }
 
@@ -118,17 +124,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               pulseAnimation: _typingPulseController,
                               color: const Color(0xFFB6FF00),
                             ),
-                          ),
-                        ),
-                      ),
-                      /// Borde Punteado
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        width: _isFocused ? 100 : 140,
-                        height: _isFocused ? 100 : 140,
-                        child: CustomPaint(
-                          painter: DashedCirclePainter(
-                            color: const Color(0xFFB6FF00).withOpacity(0.5),
                           ),
                         ),
                       ),
@@ -251,7 +246,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         TextFormField(
                           focusNode: _passwordFocusNode,
                           controller: _passwordController,
-                          obscureText: true,
+                          obscureText: _isPasswordObscured,
                           cursorColor: const Color(0xFFB6FF00),
                           style: const TextStyle(
                             color: Color(0xFFB6FF00),
@@ -275,9 +270,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               Icons.lock_outline,
                               color: Colors.grey,
                             ),
-                            suffixIcon: const Icon(
-                              Icons.visibility_off,
-                              color: Colors.grey,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordObscured
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordObscured = !_isPasswordObscured;
+                                });
+                              },
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -293,37 +297,56 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         const SizedBox(height: 40),
 
                         /// 🔥 BOTÓN NEÓN
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HomePage(),
+                        AnimatedBuilder(
+                          animation: _typingPulseController,
+                          builder: (context, child) {
+                            final pulse = _typingPulseController.value;
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFB6FF00).withOpacity(0.5 * pulse),
+                                    blurRadius: 15 * pulse,
+                                    spreadRadius: 1 * pulse,
                                   ),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xFFB6FF00),
-                              foregroundColor: Colors.black,
-                              elevation: 0,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 18),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(30),
+                                ],
                               ),
-                            ),
-                            child: const Text(
-                              "Iniciar Sesión",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              child: child,
+                            );
+                          },
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomePage(),
+                                    ),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color(0xFFB6FF00),
+                                foregroundColor: Colors.black,
+                                elevation: 0,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 18),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                "Iniciar Sesión",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
