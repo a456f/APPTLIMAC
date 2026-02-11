@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'plantillas_page.dart';
+import 'main.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,6 +47,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, size: 28),
             onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_rounded, size: 28, color: Color(0xFFB6FF00)),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+                (route) => false,
+              );
+            },
           ),
           const SizedBox(width: 16),
         ],

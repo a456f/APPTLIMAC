@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
 
 // Modelo para un mensaje de chat
 class ChatMessage {
   final String text;
   final bool isUser;
+  final bool isTyping;
 
-  ChatMessage({required this.text, required this.isUser});
+  ChatMessage({required this.text, required this.isUser, this.isTyping = false});
 }
 
 class PlantillasPage extends StatefulWidget {
@@ -22,7 +22,6 @@ class _PlantillasPageState extends State<PlantillasPage> {
   final ScrollController _scrollController = ScrollController(); // Para el scroll
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>(); // Para la lista animada
   final List<ChatMessage> _messages = [];
-  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -32,12 +31,27 @@ class _PlantillasPageState extends State<PlantillasPage> {
   }
 
   void _addBotMessage(String text) {
+    // 1. Mostrar indicador de "Escribiendo..."
+    final typingMessage = ChatMessage(text: '', isUser: false, isTyping: true);
+    
+    if (mounted) {
+      _messages.insert(0, typingMessage);
+      _listKey.currentState?.insertItem(0, duration: const Duration(milliseconds: 300));
+    }
+
     // Agrega un pequeño retraso para simular que el bot está "pensando"
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
+        // 2. Quitar indicador
+        final index = _messages.indexOf(typingMessage);
+        if (index != -1) {
+          _messages.removeAt(index);
+          _listKey.currentState?.removeItem(index, (context, animation) => _buildAnimatedMessageBubble(typingMessage, animation));
+        }
+
+        // 3. Mostrar mensaje real
         _messages.insert(0, ChatMessage(text: text, isUser: false));
         _listKey.currentState?.insertItem(0, duration: const Duration(milliseconds: 500));
-        _audioPlayer.play(AssetSource('sounds/message_received.mp3'));
       }
     });
   }
@@ -51,7 +65,7 @@ class _PlantillasPageState extends State<PlantillasPage> {
     _listKey.currentState?.insertItem(0, duration: const Duration(milliseconds: 500));
 
     // Simulación de respuesta del bot
-    if (userMessage.trim().toLowerCase() == '12345') {
+    if (userMessage.trim().toLowerCase() == 'solnuemro') {
       const String template = """🔌 PASO 2 - BOT INICIAL
 
 TICKET: VTEXT-40011771
@@ -72,7 +86,6 @@ OBSERVACIÓN:
   void dispose() {
     _controller.dispose();
     _scrollController.dispose();
-    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -138,6 +151,35 @@ OBSERVACIÓN:
 
   // Dibuja la burbuja de chat, con colores estilo WhatsApp
   Widget _buildMessageBubble(ChatMessage message) {
+    if (message.isTyping) {
+      return Container(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 5.0),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFF202C33),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFB6FF00)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text("Escribiendo...", style: TextStyle(color: Colors.grey.shade400, fontSize: 14, fontStyle: FontStyle.italic)),
+            ],
+          ),
+        ),
+      );
+    }
+
     final bubbleAlignment = message.isUser ? Alignment.centerRight : Alignment.centerLeft;
     final bubbleColor = message.isUser ? const Color(0xFF005C4B) : const Color(0xFF202C33);
 
