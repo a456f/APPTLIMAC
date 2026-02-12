@@ -111,25 +111,25 @@ class HomePage extends StatelessWidget {
                       mainAxisSpacing: 20,
                       childAspectRatio: 1.1,
                       children: [
-                        _ActionCard(
+                        ActionCard(
                           title: "Plantillas",
                           icon: Icons.copy_all,
                           color: Colors.blueAccent,
                           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlantillasPage())),
                         ),
-                        _ActionCard(
+                        ActionCard(
                           title: "Historial",
                           icon: Icons.history,
                           color: Colors.blueAccent,
                           onTap: () {},
                         ),
-                        _ActionCard(
+                        ActionCard(
                           title: "Reportes",
                           icon: Icons.bar_chart,
                           color: Colors.blueAccent,
                           onTap: () {},
                         ),
-                        _ActionCard(
+                        ActionCard(
                           title: "Ajustes",
                           icon: Icons.settings,
                           color: Colors.blueAccent,
@@ -262,7 +262,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _ActionCard extends StatelessWidget {
+class ActionCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final Color color;
@@ -270,7 +270,8 @@ class _ActionCard extends StatelessWidget {
   final String subtitle;
   final bool highlighted;
 
-  const _ActionCard({
+  const ActionCard({
+    super.key,
     required this.title,
     required this.icon,
     required this.color,
@@ -281,96 +282,119 @@ class _ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          color: const Color(0xFF0E1630).withOpacity(0.7),
-          border: Border.all(
-            color: highlighted
-                ? color.withOpacity(0.6)
-                : Colors.white.withOpacity(0.08),
-          ),
-          boxShadow: highlighted
-              ? [
-                  BoxShadow(
-                    color: color.withOpacity(0.35),
-                    blurRadius: 30,
-                    spreadRadius: 1,
-                  )
-                ]
-              : [],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 18,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
 
-              /// 🔵 Icon Bubble
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      color.withOpacity(0.7),
-                      color.withOpacity(0.15),
-                    ],
+        // Escalado dinámico basado en altura disponible
+        final iconSize = height * 0.22;
+        final spacingSmall = height * 0.03;
+        final spacingMedium = height * 0.05;
+
+        return GestureDetector(
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: const Color(0xFF0E1630).withOpacity(0.7),
+              border: Border.all(
+                color: highlighted
+                    ? color.withOpacity(0.6)
+                    : Colors.white.withOpacity(0.08),
+              ),
+              boxShadow: highlighted
+                  ? [
+                      BoxShadow(
+                        color: color.withOpacity(0.35),
+                        blurRadius: 30,
+                        spreadRadius: 1,
+                      )
+                    ]
+                  : [],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  
+                  /// 🔵 Icon Bubble
+                  Container(
+                    width: iconSize,
+                    height: iconSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          color.withOpacity(0.7),
+                          color.withOpacity(0.15),
+                        ],
+                      ),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: iconSize * 0.45,
+                    ),
                   ),
-                ),
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 26,
-                ),
+
+                  SizedBox(height: spacingMedium),
+
+                  /// 🏷 Title
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: spacingSmall),
+
+                  /// 📄 Subtitle
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        subtitle,
+                        style: const TextStyle(
+                          color: Colors.white54,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: spacingSmall),
+
+                  /// 👉 Bottom indicator
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        "Ver más",
+                        style: TextStyle(
+                          color: color,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 14),
-
-              /// 🏷 Title
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              const SizedBox(height: 4),
-
-              /// 📄 Subtitle
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: Colors.white54,
-                  fontSize: 12,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              /// 👉 Bottom indicator
-              Text(
-                "Ver más",
-                style: TextStyle(
-                  color: color,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
