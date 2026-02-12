@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             painter: TechRingsPainter(
                               animation: _rotationController,
                               pulseAnimation: _typingPulseController,
-                              color: const Color(0xFFB6FF00),
+                              color: Colors.blueAccent,
                             ),
                           ),
                         ),
@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFB6FF00).withOpacity(0.6),
+                              color: Colors.blueAccent.withOpacity(0.6),
                               blurRadius: 60,
                               spreadRadius: 10,
                             ),
@@ -206,9 +206,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         TextFormField(
                           focusNode: _emailFocusNode,
                           controller: _emailController,
-                          cursorColor: const Color(0xFFB6FF00),
+                          cursorColor: Colors.blueAccent,
                           style: const TextStyle(
-                            color: Color(0xFFB6FF00),
+                            color: Colors.blueAccent,
                             fontFamily: 'monospace', // Fuente tipo código
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
@@ -235,7 +235,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(color: Color(0xFFB6FF00), width: 2),
+                              borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
                             ),
                           ),
                         ),
@@ -247,9 +247,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           focusNode: _passwordFocusNode,
                           controller: _passwordController,
                           obscureText: _isPasswordObscured,
-                          cursorColor: const Color(0xFFB6FF00),
+                          cursorColor: Colors.blueAccent,
                           style: const TextStyle(
-                            color: Color(0xFFB6FF00),
+                            color: Colors.blueAccent,
                             fontFamily: 'monospace', // Fuente tipo código
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
@@ -289,7 +289,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(color: Color(0xFFB6FF00), width: 2),
+                              borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
                             ),
                           ),
                         ),
@@ -306,7 +306,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFB6FF00).withOpacity(0.5 * pulse),
+                                    color: Colors.blueAccent.withOpacity(0.5 * pulse),
                                     blurRadius: 15 * pulse,
                                     spreadRadius: 1 * pulse,
                                   ),
@@ -331,8 +331,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    const Color(0xFFB6FF00),
-                                foregroundColor: Colors.black,
+                                    Colors.blueAccent,
+                                foregroundColor: Colors.white,
                                 elevation: 0,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 18),

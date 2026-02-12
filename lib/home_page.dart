@@ -1,346 +1,379 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'plantillas_page.dart';
-
-class AnimatedEntrance extends StatefulWidget {
-  final Widget child;
-  final int delay;
-
-  const AnimatedEntrance({
-    super.key,
-    required this.child,
-    this.delay = 0,
-  });
-
-  @override
-  State<AnimatedEntrance> createState() => _AnimatedEntranceState();
-}
-
-class _AnimatedEntranceState extends State<AnimatedEntrance>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    final curve =
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
-
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(curve);
-
-    Future.delayed(Duration(milliseconds: widget.delay), () {
-      if (mounted) {
-        _controller.forward();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.25),
-          end: Offset.zero,
-        ).animate(_animation),
-        child: widget.child,
-      ),
-    );
-  }
-}
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF0B0F14),
-            Color(0xFF0A0D12),
-            Color(0xFF000000),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text(
-            "Dashboard TLI",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A1026),
+      body: Stack(
+        children: [
+          /// 🔥 Background Glow
+          Positioned(
+            top: -120,
+            left: -80,
+            child: _glowCircle(300, Colors.blueAccent),
+          ),
+          Positioned(
+            bottom: -150,
+            right: -100,
+            child: _glowCircle(350, Colors.blueAccent),
+          ),
+
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// 👋 Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text("Hola, Agente", style: TextStyle(color: Colors.white70, fontSize: 16)),
+                          SizedBox(height: 4),
+                          Text("Panel de Control", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.person, color: Colors.white),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// ⚡ Stats Card
+                  _glassCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Rendimiento",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "98% Eficiencia",
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            _miniStat("45", "Consultas"),
+                            const SizedBox(width: 12),
+                            _miniStat("1.2m", "Tiempo Prom."),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  /// 🔘 Tabs
+                  Row(
+                    children: [
+                      _tabButton("Principal", true),
+                      const SizedBox(width: 10),
+                      _tabButton("Herramientas", false),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// 📦 Grid
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 1.1,
+                      children: [
+                        _ActionCard(
+                          title: "Plantillas",
+                          icon: Icons.copy_all,
+                          color: Colors.blueAccent,
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlantillasPage())),
+                        ),
+                        _ActionCard(
+                          title: "Historial",
+                          icon: Icons.history,
+                          color: Colors.blueAccent,
+                          onTap: () {},
+                        ),
+                        _ActionCard(
+                          title: "Reportes",
+                          icon: Icons.bar_chart,
+                          color: Colors.blueAccent,
+                          onTap: () {},
+                        ),
+                        _ActionCard(
+                          title: "Ajustes",
+                          icon: Icons.settings,
+                          color: Colors.blueAccent,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications_none,
-                  color: Colors.white70),
-              onPressed: () {},
+        ],
+      ),
+
+      /// 🚀 Bottom Nav
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.white.withOpacity(0.08),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(Icons.home, color: Colors.white),
+            Icon(Icons.chat_bubble_outline, color: Colors.white38),
+            Icon(Icons.bar_chart, color: Colors.white38),
+            Icon(Icons.person_outline, color: Colors.white38),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 🔥 Glow
+  static Widget _glowCircle(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            color.withOpacity(0.3),
+            Colors.transparent,
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 💎 Glass Card
+  static Widget _glassCard({required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: Colors.white.withOpacity(0.05),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
             ),
-            const Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: CircleAvatar(
-                backgroundColor: Color(0xFF1A1F26),
-                child: Icon(Icons.person, color: Color(0xFFB6FF00)),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  static Widget _miniStat(String value, String label) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Colors.white.withOpacity(0.05),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white54,
+                fontSize: 12,
               ),
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
+      ),
+    );
+  }
 
-              /// Saludo
-              const AnimatedEntrance(
-                delay: 100,
-                child: Text(
-                  "Hola, Agente",
-                  style: TextStyle(
-                    color: Colors.white60,
-                    fontSize: 16,
-                  ),
-                ),
+  static Widget _tabButton(String text, bool active) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: active
+            ? const LinearGradient(
+                colors: [
+                  Colors.blueAccent,
+                  Colors.lightBlueAccent,
+                ],
+              )
+            : null,
+        color: active ? null : Colors.white.withOpacity(0.05),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: active ? Colors.white : Colors.white54,
+          fontWeight: active ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final String subtitle;
+  final bool highlighted;
+
+  const _ActionCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    this.subtitle = "Disponible",
+    this.highlighted = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white.withOpacity(0.05),
+              border: Border.all(
+                color: highlighted
+                    ? color.withOpacity(0.6)
+                    : Colors.white.withOpacity(0.1),
               ),
-
-              const SizedBox(height: 6),
-
-              const AnimatedEntrance(
-                delay: 200,
-                child: Text(
-                  "Resumen del día",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              boxShadow: highlighted
+                  ? [
+                      BoxShadow(
+                        color: color.withOpacity(0.4),
+                        blurRadius: 25,
+                        spreadRadius: 1,
+                      )
+                    ]
+                  : [],
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.02),
+                ],
               ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
 
-              const SizedBox(height: 30),
+                /// 🔵 Icono en burbuja glow
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        color.withOpacity(0.7),
+                        color.withOpacity(0.15),
+                      ],
+                    ),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 28),
+                ),
 
-              /// Stats
-              AnimatedEntrance(
-                delay: 300,
-                child: Row(
+                Column(
                   children: [
-                    Expanded(
-                      child: _buildStatCard(
-                        title: "Consultas",
-                        value: "24",
-                        icon: Icons.search,
-                        color: Colors.blueAccent,
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: _buildStatCard(
-                        title: "Plantillas",
-                        value: "12",
-                        icon: Icons.copy,
-                        color: const Color(0xFFB6FF00),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: Colors.white54,
+                        fontSize: 12,
                       ),
                     ),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: 40),
-
-              const AnimatedEntrance(
-                delay: 400,
-                child: Text(
-                  "Herramientas",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                /// 👉 Indicador inferior elegante
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Ver más",
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(Icons.arrow_forward_ios,
+                        size: 12, color: color),
+                  ],
                 ),
-              ),
-
-              const SizedBox(height: 20),
-
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                childAspectRatio: 1.2,
-                children: [
-                  AnimatedEntrance(
-                    delay: 500,
-                    child: _buildActionCard(
-                      context,
-                      title: "Buscar Plantillas",
-                      icon: Icons.chat_bubble_outline,
-                      color: const Color(0xFFB6FF00),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const PlantillasPage()),
-                        );
-                      },
-                    ),
-                  ),
-                  AnimatedEntrance(
-                    delay: 600,
-                    child: _buildActionCard(
-                      context,
-                      title: "Historial",
-                      icon: Icons.history,
-                      color: Colors.cyanAccent,
-                      onTap: () {},
-                    ),
-                  ),
-                  AnimatedEntrance(
-                    delay: 700,
-                    child: _buildActionCard(
-                      context,
-                      title: "Favoritos",
-                      icon: Icons.star_border,
-                      color: Colors.amberAccent,
-                      onTap: () {},
-                    ),
-                  ),
-                  AnimatedEntrance(
-                    delay: 800,
-                    child: _buildActionCard(
-                      context,
-                      title: "Ajustes",
-                      icon: Icons.settings_outlined,
-                      color: Colors.white70,
-                      onTap: () {},
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  static Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: const Color(0xFF141A21),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.15),
-            blurRadius: 25,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color.withOpacity(0.12),
+              ],
             ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white60,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Widget _buildActionCard(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(30),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(30),
-        splashColor: color.withOpacity(0.2),
-        highlightColor: color.withOpacity(0.1),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: const Color(0xFF141A21),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.1),
-                blurRadius: 20,
-              )
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 34),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
           ),
         ),
       ),

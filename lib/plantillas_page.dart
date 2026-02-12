@@ -169,7 +169,7 @@ OBSERVACIÓN:
                 height: 12,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFB6FF00)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
                 ),
               ),
               const SizedBox(width: 8),
@@ -181,7 +181,7 @@ OBSERVACIÓN:
     }
 
     final bubbleAlignment = message.isUser ? Alignment.centerRight : Alignment.centerLeft;
-    final bubbleColor = message.isUser ? const Color(0xFF005C4B) : const Color(0xFF202C33);
+    final bubbleColor = message.isUser ? Colors.blueAccent : const Color(0xFF202C33);
 
     return Container(
       alignment: bubbleAlignment,
@@ -209,7 +209,7 @@ OBSERVACIÓN:
             child: TextField(
               controller: _controller,
               onSubmitted: _handleSubmitted,
-              cursorColor: const Color(0xFFB6FF00),
+              cursorColor: Colors.blueAccent,
               style: const TextStyle(color: Colors.white, fontSize: 16),
               decoration: InputDecoration(
                 hintText: "Escribe tu búsqueda...",
@@ -223,8 +223,8 @@ OBSERVACIÓN:
           ),
           const SizedBox(width: 8),
           CircleAvatar(
-            backgroundColor: const Color(0xFFB6FF00),
-            child: IconButton(icon: const Icon(Icons.send, color: Colors.black), onPressed: () => _handleSubmitted(_controller.text)),
+            backgroundColor: Colors.blueAccent,
+            child: IconButton(icon: const Icon(Icons.send, color: Colors.white), onPressed: () => _handleSubmitted(_controller.text)),
           ),
         ],
       ),
