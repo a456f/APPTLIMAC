@@ -36,9 +36,9 @@ class HomePage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Text("Hola, Agente", style: TextStyle(color: Colors.white70, fontSize: 16)),
+                          Text("Hola, Anthony", style: TextStyle(color: Colors.white70, fontSize: 16)),
                           SizedBox(height: 4),
-                          Text("Panel de Control", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+                          Text("Panel de Control TLI", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
                         ],
                       ),
                       Container(
@@ -283,97 +283,91 @@ class _ActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              color: Colors.white.withOpacity(0.05),
-              border: Border.all(
-                color: highlighted
-                    ? color.withOpacity(0.6)
-                    : Colors.white.withOpacity(0.1),
-              ),
-              boxShadow: highlighted
-                  ? [
-                      BoxShadow(
-                        color: color.withOpacity(0.4),
-                        blurRadius: 25,
-                        spreadRadius: 1,
-                      )
-                    ]
-                  : [],
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.08),
-                  Colors.white.withOpacity(0.02),
-                ],
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          color: const Color(0xFF0E1630).withOpacity(0.7),
+          border: Border.all(
+            color: highlighted
+                ? color.withOpacity(0.6)
+                : Colors.white.withOpacity(0.08),
+          ),
+          boxShadow: highlighted
+              ? [
+                  BoxShadow(
+                    color: color.withOpacity(0.35),
+                    blurRadius: 30,
+                    spreadRadius: 1,
+                  )
+                ]
+              : [],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 18,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
 
-                /// 🔵 Icono en burbuja glow
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        color.withOpacity(0.7),
-                        color.withOpacity(0.15),
-                      ],
-                    ),
+              /// 🔵 Icon Bubble
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      color.withOpacity(0.7),
+                      color.withOpacity(0.15),
+                    ],
                   ),
-                  child: Icon(icon, color: Colors.white, size: 28),
                 ),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
 
-                Column(
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 14),
 
-                /// 👉 Indicador inferior elegante
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Ver más",
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios,
-                        size: 12, color: color),
-                  ],
+              /// 🏷 Title
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 4),
+
+              /// 📄 Subtitle
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: Colors.white54,
+                  fontSize: 12,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              /// 👉 Bottom indicator
+              Text(
+                "Ver más",
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
       ),
