@@ -1,300 +1,347 @@
 import 'package:flutter/material.dart';
 import 'plantillas_page.dart';
-import 'main.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AnimatedEntrance extends StatefulWidget {
+  final Widget child;
+  final int delay;
+
+  const AnimatedEntrance({
+    super.key,
+    required this.child,
+    this.delay = 0,
+  });
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AnimatedEntrance> createState() => _AnimatedEntranceState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
-  late AnimationController _animationController;
+class _AnimatedEntranceState extends State<AnimatedEntrance>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..forward();
-  }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    final curve =
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(curve);
+
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.forward();
+      }
     });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        // The hamburger icon is removed automatically as there is no longer a Drawer.
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, size: 28),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, size: 28, color: Color(0xFFB6FF00)),
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false,
-              );
-            },
-          ),
-          const SizedBox(width: 16),
-        ],
+    return FadeTransition(
+      opacity: _animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.25),
+          end: Offset.zero,
+        ).animate(_animation),
+        child: widget.child,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF0D0D0D),
-              Color(0xFF000000),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF0B0F14),
+            Color(0xFF0A0D12),
+            Color(0xFF000000),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        child: SafeArea(
-          child: IndexedStack(
-        index: _selectedIndex,
-        children: <Widget>[
-          // Tab 1: Dashboard
-          Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            // Encabezado Moderno
-            SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.5),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: _animationController,
-                curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-              )),
-              child: FadeTransition(
-                opacity: Tween<double>(
-                  begin: 0.0,
-                  end: 1.0,
-                ).animate(CurvedAnimation(
-                  parent: _animationController,
-                  curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-                )),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: const Text(
+            "Dashboard TLI",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_none,
+                  color: Colors.white70),
+              onPressed: () {},
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: CircleAvatar(
+                backgroundColor: Color(0xFF1A1F26),
+                child: Icon(Icons.person, color: Color(0xFFB6FF00)),
+              ),
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+
+              /// Saludo
+              const AnimatedEntrance(
+                delay: 100,
+                child: Text(
+                  "Hola, Agente",
+                  style: TextStyle(
+                    color: Colors.white60,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              const AnimatedEntrance(
+                delay: 200,
+                child: Text(
+                  "Resumen del día",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              /// Stats
+              AnimatedEntrance(
+                delay: 300,
                 child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hola, Usuario",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        title: "Consultas",
+                        value: "24",
+                        icon: Icons.search,
+                        color: Colors.blueAccent,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Bienvenido a tu panel",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey.shade400,
-                        ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: _buildStatCard(
+                        title: "Plantillas",
+                        value: "12",
+                        icon: Icons.copy,
+                        color: const Color(0xFFB6FF00),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              const AnimatedEntrance(
+                delay: 400,
+                child: Text(
+                  "Herramientas",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFB6FF00), width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFB6FF00).withOpacity(0.6),
-                        blurRadius: 25,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: const CircleAvatar(
-                    radius: 28,
-                    backgroundImage: AssetImage('assets/user.png'),
-                  ),
-                ),
-              ],
-            ),
               ),
-            ),
-            const SizedBox(height: 40),
-            const Text(
-              "Gestión",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: GridView.count(
+
+              const SizedBox(height: 20),
+
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
-                crossAxisSpacing: 12.0,
-                mainAxisSpacing: 12.0,
-                childAspectRatio: 0.85,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+                childAspectRatio: 1.2,
                 children: [
-                  _buildCard(
-                    Icons.description_outlined,
-                    "Plantillas",
-                    "Gestionar docs",
-                    const Color(0xFF00E5FF),
-                    1,
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const PlantillasPage()));
-                    },
+                  AnimatedEntrance(
+                    delay: 500,
+                    child: _buildActionCard(
+                      context,
+                      title: "Buscar Plantillas",
+                      icon: Icons.chat_bubble_outline,
+                      color: const Color(0xFFB6FF00),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const PlantillasPage()),
+                        );
+                      },
+                    ),
                   ),
-                  _buildCard(Icons.attach_money, "Liquidaciones", "Ver pagos", const Color(0xFFB6FF00), 2),
+                  AnimatedEntrance(
+                    delay: 600,
+                    child: _buildActionCard(
+                      context,
+                      title: "Historial",
+                      icon: Icons.history,
+                      color: Colors.cyanAccent,
+                      onTap: () {},
+                    ),
+                  ),
+                  AnimatedEntrance(
+                    delay: 700,
+                    child: _buildActionCard(
+                      context,
+                      title: "Favoritos",
+                      icon: Icons.star_border,
+                      color: Colors.amberAccent,
+                      onTap: () {},
+                    ),
+                  ),
+                  AnimatedEntrance(
+                    delay: 800,
+                    child: _buildActionCard(
+                      context,
+                      title: "Ajustes",
+                      icon: Icons.settings_outlined,
+                      color: Colors.white70,
+                      onTap: () {},
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-          // Tab 2: Settings (Placeholder)
-          const Center(
-            child: Text('Página de Ajustes', style: TextStyle(color: Colors.white)),
+            ],
           ),
-          // Tab 3: Profile (Placeholder)
-          const Center(
-            child: Text('Página de Perfil', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.1), width: 0.5),
-          ),
-        ),
-        child: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: 'Inicio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              label: 'Ajustes',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Perfil',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: const Color(0xFFB6FF00),
-          unselectedItemColor: Colors.grey[600],
-          backgroundColor: Colors.black,
-          type: BottomNavigationBarType.fixed, // Consistent with iOS style
-          elevation: 0,
         ),
       ),
     );
   }
 
-  Widget _buildCard(IconData icon, String title, String subtitle, Color color, int index, {VoidCallback? onTap}) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0, 0.5), // Empieza un poco más abajo
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(index * 0.2, 1.0, curve: Curves.easeOutCubic), // Efecto cascada
-      )),
-      child: FadeTransition(
-        opacity: Tween<double>(
-          begin: 0.0,
-          end: 1.0,
-        ).animate(CurvedAnimation(
-          parent: _animationController,
-          curve: Interval(index * 0.2, 1.0, curve: Curves.easeOut),
-        )),
-        child: Container(
+  static Widget _buildStatCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: const Color(0xFF111111),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        borderRadius: BorderRadius.circular(30),
+        color: const Color(0xFF141A21),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.15),
+            blurRadius: 25,
+            spreadRadius: 1,
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap ?? () {},
-          borderRadius: BorderRadius.circular(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color.withOpacity(0.12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white60,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildActionCard(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(30),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(30),
+        splashColor: color.withOpacity(0.2),
+        highlightColor: color.withOpacity(0.1),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: const Color(0xFF141A21),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.1),
+                blurRadius: 20,
+              )
+            ],
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 30, color: color),
-              ),
-              const SizedBox(height: 16),
+              Icon(icon, color: color, size: 34),
+              const SizedBox(height: 14),
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
                   color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade500,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
-        ),
-      ),
         ),
       ),
     );
