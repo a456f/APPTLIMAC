@@ -65,7 +65,7 @@ class _PlantillasPageState extends State<PlantillasPage> {
     _listKey.currentState?.insertItem(0, duration: const Duration(milliseconds: 500));
 
     // Simulación de respuesta del bot
-    if (userMessage.trim().toLowerCase() == 'solnuemro') {
+    if (userMessage.trim().toLowerCase() == '1234') {
       const String template = """🔌 PASO 2 - BOT INICIAL
 
 TICKET: VTEXT-40011771
